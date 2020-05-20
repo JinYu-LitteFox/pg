@@ -184,7 +184,7 @@ function launchCrossPlatform(){
   >
   > 
   >
-  > 1. LGD_PAYINFO : 아래 Xpay 결제창 호출 요청 파라미터를 전송한다 ( [**XPay 결제 서비스 파라미터 참조**](#step1) )
+  > 1. LGD_PAYINFO : 아래 Xpay 결제창 호출 요청 파라미터를 전송한다 ( [**XPay 결제 서비스 파라미터 참조**](#-xpay-결제-서비스-파라미터-) )
   >
   > 2. CST_PLATFORM : “service” or “test"
   >
