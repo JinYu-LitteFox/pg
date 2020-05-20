@@ -1,0 +1,17 @@
+{
+    "name": "pgtest/pgtest",
+    "type": "project",
+    "description": "This code is just PG Tesging",
+    "license": "MIT",
+    "require": {
+        "vlucas/phpdotenv": "^4.1"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lg\\": "LGU+/src/"
+        }
+    }
+}

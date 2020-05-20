@@ -7,7 +7,7 @@
  * File: XPayClient.php
  */
 
-namespace Pg\Lg;
+namespace Lg;
 
 class XPayClient
 {
@@ -124,8 +124,10 @@ class XPayClient
         if (! file_exists($this->config["log_dir"])) {
             mkdir($this->config["log_dir"], "0777", true);
         }
-        $this->log("XPayClient initialize [" . $home_dir . "] [" . $mode . "]",
-            LGD_LOG_INFO);
+        $this->log(
+            "XPayClient initialize [" . $home_dir . "] [" . $mode . "]",
+            LGD_LOG_INFO
+        );
         if (strtolower($mode) == "test") {
             $this->bTest = true;
             $this->debug = false;
@@ -164,8 +166,11 @@ class XPayClient
             curl_setopt($this->ch, CURLOPT_SSLVERSION, 0);
             //echo "default_secure_protocols = " . $this->config['default_secure_protocols'] . "<br>";
         }
-        curl_setopt($this->ch, CURLOPT_CAINFO,
-            $this->home_dir . "/conf/ca-bundle.crt");
+        curl_setopt(
+            $this->ch,
+            CURLOPT_CAINFO,
+            $this->home_dir . "/conf/ca-bundle.crt"
+        );
     }
 
     function Init_TX($MID)
@@ -347,8 +352,12 @@ class XPayClient
             $bCheckURL = true;
         }
         if ($bCheckURL == true) {
-            $result = $this->send_post_data($url, $this->Post, null,
-                $this->config['timeout']);
+            $result = $this->send_post_data(
+                $url,
+                $this->Post,
+                null,
+                $this->config['timeout']
+            );
         } else {
             $result              = false;
             $bRollback           = false;
@@ -415,20 +424,28 @@ class XPayClient
                         $this->response_msg
                             = $this->response_array["LGD_RESPMSG"];
                     } else {
-                        $this->response_msg = iconv("utf-8", "euc-kr",
-                            $this->response_array["LGD_RESPMSG"]);
+                        $this->response_msg = iconv(
+                            "utf-8",
+                            "euc-kr",
+                            $this->response_array["LGD_RESPMSG"]
+                        );
                     }
                     $this->log("Response Code=[" . $this->response_code
-                               . "], Msg=[" . iconv("utf-8", "euc-kr",
-                            $this->response_array["LGD_RESPMSG"]) . "], Count="
+                               . "], Msg=[" . iconv(
+                                   "utf-8",
+                                   "euc-kr",
+                                   $this->response_array["LGD_RESPMSG"]
+                               ) . "], Count="
                                . $this->Response_Count(), LGD_LOG_INFO);
                     $keys = $this->Response_Names();
                     for ($i = 0; $i < $this->Response_Count(); $i++) {
                         foreach ($keys as $name) {
                             if ($this->IsAcceptLog($name, LGD_LOG_DEBUG)) {
                                 $this->log("Response (" . $name . ", " . $i
-                                           . ") = " . $this->Response($name,
-                                        $i), LGD_LOG_DEBUG);
+                                           . ") = " . $this->Response(
+                                               $name,
+                                               $i
+                                           ), LGD_LOG_DEBUG);
                             }
                         }
                     }
@@ -457,8 +474,12 @@ class XPayClient
     function Report_TX()
     {
         $url    = $this->config['aux_url'];
-        $result = $this->send_post_data($url, $this->Post, null,
-            $this->config['timeout']);
+        $result = $this->send_post_data(
+            $url,
+            $this->Post,
+            null,
+            $this->config['timeout']
+        );
         if ($result == false) {
             set_curl_error();
             $this->log("Reporting failed: res code = " . $this->response_code
@@ -482,8 +503,11 @@ class XPayClient
             return false;
         }
         $response_code = $response_array["LGD_RESPCODE"];
-        $response_msg  = iconv("utf-8", "euc-kr",
-            $response_array["LGD_RESPMSG"]);
+        $response_msg  = iconv(
+            "utf-8",
+            "euc-kr",
+            $response_array["LGD_RESPMSG"]
+        );
         $this->log("Report Response Code=[" . $response_code . "], Msg=["
                    . $response_msg . "]", LGD_LOG_INFO);
 
@@ -495,8 +519,13 @@ class XPayClient
         $url      = $this->config['aux_url'];
         $tmp_file = tempnam($this->home_dir . "/conf", "tmp");
         $fp       = fopen($tmp_file, "w");
-        $result   = $this->post_into_file($url, $this->Post, $fp, null,
-            $this->config['timeout']);
+        $result   = $this->post_into_file(
+            $url,
+            $this->Post,
+            $fp,
+            null,
+            $this->config['timeout']
+        );
         fclose($fp);
         if ($result == false) {
             unlink($tmp_file);
@@ -507,8 +536,10 @@ class XPayClient
             $this->log("Patch success: file = " . $filename, LGD_LOG_INFO);
             $type = curl_getinfo($this->ch, CURLINFO_CONTENT_TYPE);
             if (strncasecmp($type, "text/plain", 10) == 0) {
-                $this->log("Patch success: Content-Type = " . $type,
-                    LGD_LOG_INFO);
+                $this->log(
+                    "Patch success: Content-Type = " . $type,
+                    LGD_LOG_INFO
+                );
                 copy($tmp_file, $this->home_dir . "/conf/" . $filename);
                 unlink($tmp_file);
 
@@ -603,8 +634,11 @@ class XPayClient
         if ($this->config['output_UTF8'] == 1) {
             return ($this->response_array["LGD_RESPONSE"][$index][$name]);
         } else {
-            return (iconv("utf-8", "euc-kr",
-                $this->response_array["LGD_RESPONSE"][$index][$name]));
+            return (iconv(
+                "utf-8",
+                "euc-kr",
+                $this->response_array["LGD_RESPONSE"][$index][$name]
+            ));
         }
     }
 
@@ -617,8 +651,11 @@ class XPayClient
             if (mb_detect_encoding($msg, "EUC-KR, UTF-8") == "UTF-8"
                 && $this->config['output_UTF8'] == 0) {
                 $err_msg = date("Y-m-d H:i:s") . " [" . $this->err_label[$level]
-                           . "] [" . $this->TX_ID . "] " . iconv("utf-8",
-                        "euc-kr", $msg) . "\n";
+                           . "] [" . $this->TX_ID . "] " . iconv(
+                               "utf-8",
+                               "euc-kr",
+                               $msg
+                           ) . "\n";
             } else {
                 $err_msg = date("Y-m-d H:i:s") . " [" . $this->err_label[$level]
                            . "] [" . $this->TX_ID . "] " . $msg . "\n";
@@ -672,8 +709,10 @@ class XPayClient
             foreach ($postdata as $key => $value) {
                 $post_array[] = urlencode($key) . "=" . urlencode($value);
                 if ($this->IsAcceptLog($key, LGD_LOG_DEBUG)) {
-                    $this->log("Post [" . $key . "] = [" . $value . "]",
-                        LGD_LOG_DEBUG);
+                    $this->log(
+                        "Post [" . $key . "] = [" . $value . "]",
+                        LGD_LOG_DEBUG
+                    );
                 }
             }
             $post_string = implode("&", $post_array);
@@ -764,8 +803,10 @@ class XPayClient
             foreach ($postdata as $key => $value) {
                 $post_array[] = urlencode($key) . "=" . urlencode($value);
                 if (IsAcceptLog($key, LGD_LOG_DEBUG)) {
-                    $this->log("Post [" . $key . "] = [" . $value . "]",
-                        LGD_LOG_DEBUG);
+                    $this->log(
+                        "Post [" . $key . "] = [" . $value . "]",
+                        LGD_LOG_DEBUG
+                    );
                 }
             }
             $post_string = implode("&", $post_array);
@@ -987,8 +1028,12 @@ class XPayClient
         $LgdValue               = ":LGD:" . $PlainBufferTemp;
         $PlainBuffer            .= $LgdValue;
         $key                    = $this->StringToHex($MertKey);
-        $EncrytBuffer           = mcrypt_ecb(MCRYPT_RIJNDAEL_128, $key,
-            $PlainBuffer, MCRYPT_ENCRYPT);
+        $EncrytBuffer           = mcrypt_ecb(
+            MCRYPT_RIJNDAEL_128,
+            $key,
+            $PlainBuffer,
+            MCRYPT_ENCRYPT
+        );
         $EncryptAndEncodeBuffer = base64_encode($EncrytBuffer);
         $EncryptReturnValue     = $EncryptAndEncodeBuffer;
         echo "EncryptReturnValue = " . $EncryptReturnValue . "<BR>";
@@ -1012,8 +1057,12 @@ class XPayClient
         echo "DecodeAndDecrypt Start<BR>";
         $key           = $this->StringToHex($MertKey);
         $DecodeBuffer  = base64_decode($EncryptAndEncodeBuffer);
-        $DecryptBuffer = mcrypt_ecb(MCRYPT_RIJNDAEL_128, $key, $DecodeBuffer,
-            MCRYPT_DECRYPT);
+        $DecryptBuffer = mcrypt_ecb(
+            MCRYPT_RIJNDAEL_128,
+            $key,
+            $DecodeBuffer,
+            MCRYPT_DECRYPT
+        );
         $UnPaddString  = $this->pkcs5_unpad($DecryptBuffer);
         echo "UnPaddString : " . $UnPaddString . "<BR>";
         echo "DecodeAndDecrypt Complete<BR>";
@@ -1055,5 +1104,4 @@ class XPayClient
 
         return substr($text, 0, -1 * $pad);
     }
-
 }
